@@ -90,4 +90,14 @@ class Twsms
     {
         return !empty($message) ? true : false;
     }
+
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    public function getErrno()
+    {
+        return $this->errno;
+    }
 }
