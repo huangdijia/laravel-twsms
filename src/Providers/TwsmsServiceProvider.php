@@ -36,7 +36,7 @@ class TwsmsServiceProvider extends ServiceProvider
 
     public function bootConfig()
     {
-        $path = __DIR__ . '/../config/config.php';
+        $path = __DIR__ . '/../../config/config.php';
 
         $this->mergeConfigFrom($path, 'twsms');
     }
