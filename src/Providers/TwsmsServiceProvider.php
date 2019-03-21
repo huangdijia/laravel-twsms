@@ -19,7 +19,7 @@ class TwsmsServiceProvider extends ServiceProvider
         $this->bootConfig();
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__ . '/../config/config.php' => config_path('twsms.php')]);
+            $this->publishes([__DIR__ . '/../../config/config.php' => config_path('twsms.php')]);
         }
     }
 
