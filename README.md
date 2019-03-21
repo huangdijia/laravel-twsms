@@ -1,4 +1,12 @@
-# laravel-twsms
+# SMS gateway for twsms
+
+[![Latest Stable Version](https://poser.pugx.org/huangdijia/laravel-twsms/version.png)](https://packagist.org/packages/huangdijia/laravel-twsms)
+[![Total Downloads](https://poser.pugx.org/huangdijia/laravel-twsms/d/total.png)](https://packagist.org/packages/huangdijia/laravel-twsms)
+
+## Requirements
+
+* PHP >= 7.0
+* Laravel >= 5.5
 
 ## Installation
 
