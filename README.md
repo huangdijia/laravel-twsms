@@ -42,3 +42,13 @@ Huangdijia\Twsms\Facades\Twsms::send($mobile, $message);
 ```php
 app('sms.twsms')->send($mobile, $message);
 ```
+
+## Error
+
+```php
+$twsms = app('sms.twsms');
+
+if (!$twsms->send($mobile, $message)) {
+    dd($twsms->getError());
+}
+```
