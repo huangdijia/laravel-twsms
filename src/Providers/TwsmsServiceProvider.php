@@ -2,7 +2,6 @@
 
 namespace Huangdijia\Twsms\Providers;
 
-use Huangdijia\Twsms\Console\InfoCommand;
 use Huangdijia\Twsms\Console\SendCommand;
 use Huangdijia\Twsms\Twsms;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +16,8 @@ class TwsmsServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->bootConfig();
+
         if ($this->app->runningInConsole()) {
             $this->publishes([__DIR__ . '/../config/config.php' => config_path('twsms.php')]);
         }
@@ -31,6 +32,13 @@ class TwsmsServiceProvider extends ServiceProvider
         $this->app->alias(Twsms::class, 'sms.twsms');
 
         $this->commands($this->commands);
+    }
+
+    public function bootConfig()
+    {
+        $path = __DIR__ . '/../config/config.php';
+
+        $this->mergeConfigFrom($path, 'twsms');
     }
 
     public function provides()
