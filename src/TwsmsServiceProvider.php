@@ -1,17 +1,16 @@
 <?php
 
-namespace Huangdijia\Twsms\Providers;
+namespace Huangdijia\Twsms;
 
-use Huangdijia\Twsms\Console\SendCommand;
-use Huangdijia\Twsms\Twsms;
 use Illuminate\Support\ServiceProvider;
 
 class TwsmsServiceProvider extends ServiceProvider
 {
-    protected $defer = true;
+    // protected $defer = true;
 
     protected $commands = [
-        SendCommand::class,
+        Console\InstallCommand::class,
+        Console\SendCommand::class,
     ];
 
     public function boot()
@@ -19,14 +18,14 @@ class TwsmsServiceProvider extends ServiceProvider
         $this->bootConfig();
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__ . '/../../config/config.php' => $this->app->basePath('config/twsms.php')]);
+            $this->publishes([__DIR__ . '/../../config/twsms.php' => $this->app->basePath('config/twsms.php')]);
         }
     }
 
     public function register()
     {
         $this->app->singleton(Twsms::class, function () {
-            return new Twsms(config('twsms'));
+            return new Twsms($this->app['config']->get('twsms', []));
         });
 
         $this->app->alias(Twsms::class, 'sms.twsms');
@@ -36,9 +35,7 @@ class TwsmsServiceProvider extends ServiceProvider
 
     public function bootConfig()
     {
-        $path = __DIR__ . '/../../config/config.php';
-
-        $this->mergeConfigFrom($path, 'twsms');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/twsms.php', 'twsms');
     }
 
     public function provides()

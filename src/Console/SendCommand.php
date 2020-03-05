@@ -2,6 +2,7 @@
 
 namespace Huangdijia\Twsms\Console;
 
+use Exception;
 use Illuminate\Console\Command;
 
 class SendCommand extends Command
@@ -13,10 +14,11 @@ class SendCommand extends Command
     {
         $mobile  = $this->argument('mobile');
         $message = $this->argument('message');
-        $twsms   = app('sms.twsms');
 
-        if (!$twsms->send($mobile, $message)) {
-            $this->error($twsms->getError(), 1);
+        try {
+            $this->laravel->make('sms.twsms')->send($mobile, $message);
+        } catch (Exception $e) {
+            $this->error($e->getMessage(), 1);
             return;
         }
 

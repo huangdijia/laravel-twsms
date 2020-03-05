@@ -2,7 +2,8 @@
 
 namespace Huangdijia\Twsms;
 
-use Huangdijia\Curl\Facades\Curl;
+use Exception;
+use Illuminate\Support\Facades\Http;
 
 class Twsms
 {
@@ -10,44 +11,27 @@ class Twsms
     protected $apis   = [
         'send_sms' => 'http://api.twsms.com/send.php',
     ];
-    protected $init = true;
 
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
-        if (empty($config['account'])) {
-            $this->error = "config twsms.account is undefined";
-            $this->errno = 101;
-            $this->init  = false;
-            return;
-        }
-        if (empty($config['password'])) {
-            $this->error = "config twsms.password is undefined";
-            $this->errno = 102;
-            $this->init  = false;
-            return;
-        }
-
         $this->config = $config;
     }
 
+    /**
+     * Send sms
+     * @param string $mobile 
+     * @param string $message 
+     * @return true 
+     */
     public function send($mobile = '', $message = '')
     {
-        if (!$this->init) {
-            return false;
-        }
+        throw_if(empty($this->config['account']), new Exception("config twsms.account is undefined", 101));
 
-        // 默认错误信息
-        $this->error = null;
-        $this->errno = null;
+        throw_if(empty($this->config['password']), new Exception("config twsms.password is undefined", 102));
 
-        // 检测数据
-        if (!$this->checkMobile($mobile)) {
-            return false;
-        }
+        throw_if(!$this->checkMobile($mobile), new Exception("mobile is error"));
 
-        if (!$this->checkMessage($message)) {
-            return false;
-        }
+        throw_if(!$this->checkMessage($message), new Exception("message is message"));
 
         $data = [
             'username' => $this->config['account'],
@@ -60,44 +44,32 @@ class Twsms
             'message'  => iconv('utf-8', $this->config['encoding'] ?? 'big5' . '//IGNORE', $message),
         ];
 
-        $url      = $this->apis['send_sms'];
-        $data     = http_build_query($data);
-        $response = Curl::post($url, $data);
-
-        if (false === $response) {
-            $this->errno = 402;
-            $this->error = '返回結果為空';
-            return false;
-        }
+        $response = Http::post($this->apis['send_sms'], $data)->throw();
 
         [$key, $msgid] = explode('=', $response);
 
-        if ($msgid <= 0) {
-            $this->errno = 403;
-            $this->error = '廠商發送失敗';
-            return false;
-        }
+        throw_if($msgid <= 0, new Exception("Send failed"));
 
         return true;
     }
 
+    /**
+     * Check mobile
+     * @param string $mobile
+     * @return bool
+     */
     protected function checkMobile($mobile = '')
     {
-        return preg_match('/^09\d{8}$/', $mobile);
+        return preg_match('/^09\d{8}$/', $mobile) ? true : false;
     }
 
+    /**
+     * Check message
+     * @param string $message
+     * @return bool
+     */
     protected function checkMessage($message = '')
     {
         return !empty($message) ? true : false;
-    }
-
-    public function getError()
-    {
-        return $this->error;
-    }
-
-    public function getErrno()
-    {
-        return $this->errno;
     }
 }

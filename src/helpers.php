@@ -9,6 +9,6 @@ if (!function_exists('twsms')) {
 if (!function_exists('twsms_send')) {
     function twsms_send($mobile = '', $message = '')
     {
-        return app('sms.twsms')->send($mobile, $message) ?: app('sms.twsms')->getError();
+        return app('sms.twsms')->send($mobile, $message);
     }
 }
