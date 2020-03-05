@@ -46,7 +46,7 @@ class Twsms
 
         $response = Http::post($this->apis['send_sms'], $data)->throw();
 
-        [$key, $msgid] = explode('=', $response);
+        [$key, $msgid] = explode('=', $response->body());
 
         throw_if($msgid <= 0, new Exception("Send failed"));
 
